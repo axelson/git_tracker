@@ -4,15 +4,10 @@ require "git_tracker/repository"
 module GitTracker
   module Branch
     def self.story_number
-      current[/#?(\d{6,10})/, 1]
-    end
-
-    def self.current
-      branch_path = `git symbolic-ref HEAD`
-
+      branch = `git symbolic-ref --short HEAD`
+      description = `git config --get branch.#{branch.strip}.description`
       Repository.ensure_exists unless exit_successful?
-
-      branch_path[%r{refs/heads/(.+)}, 1] || ""
+      description.strip
     end
 
     def self.exit_successful?
